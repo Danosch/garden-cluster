@@ -1,0 +1,50 @@
+# deployment.yaml
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: garden-app
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: garden-app
+  namespace: garden-app
+  annotations:
+    k8s.grafana.com/scrape: "true"
+    k8s.grafana.com/metrics.portNumber: "8080"
+    k8s.grafana.com/metrics.path: /q/metrics
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: garden-app
+  template:
+    metadata:
+      labels:
+        app: garden-app
+    spec:
+      containers:
+        - name: garden-app
+          image: garden-app:0.1
+          imagePullPolicy: Never
+          ports:
+            - name: http
+              containerPort: 8080
+          env:
+            - name: QUARKUS_DATASOURCE_DB_KIND
+              value: "h2"
+            - name: QUARKUS_DATASOURCE_JDBC_URL
+              value: "jdbc:h2:mem:default;DB_CLOSE_DELAY=-1"
+            - name: QUARKUS_DATASOURCE_USERNAME
+              value: "sa"
+            - name: QUARKUS_DATASOURCE_PASSWORD
+              value: ""
+            - name: QUARKUS_HIBERNATE_ORM_DATABASE_GENERATION
+              value: "update"
+            # Micrometer/Prometheus aktivieren
+            - name: QUARKUS_MICROMETER_EXPORT_PROMETHEUS_ENABLED
+              value: "true"
+            - name: QUARKUS_MICROMETER_EXPORT_PROMETHEUS_PATH
+              value: "/q/metrics"
+            - name: QUARKUS_OTP_METRICS_ENABLED
+              value: "true"

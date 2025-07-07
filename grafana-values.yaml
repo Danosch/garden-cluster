@@ -1,0 +1,120 @@
+# grafana-values.yaml
+
+# Admin user configuration
+adminUser: admin
+adminPassword: admin
+
+# Service configuration
+service:
+  type: NodePort
+  port: 3000
+
+# Ingress configuration for grafana.garden.local
+ingress:
+  enabled: true
+  annotations:
+    kubernetes.io/ingress.class: "nginx"
+    nginx.ingress.kubernetes.io/enable-opentelemetry: "true"
+  hosts:
+    - grafana.garden.local
+  paths:
+    - path: /
+      pathType: Prefix
+
+# Resource limits
+resources:
+  limits:
+    cpu: 1000m
+    memory: 1Gi
+  requests:
+    cpu: 100m
+    memory: 128Mi
+
+# Grafana ini tweaks
+grafana.ini:
+  server:
+    root_url: "http://grafana.garden.local"
+    serve_from_sub_path: false
+  security:
+    allow_embedding: true
+    cookie_secure: false
+    cookie_samesite: lax
+  auth:
+    disable_login_form: false
+  auth.anonymous:
+    enabled: false
+  log:
+    mode: console
+    level: info
+
+# Data sources
+datasources:
+  datasources.yaml:
+    apiVersion: 1
+    datasources:
+      - name: Loki
+        type: loki
+        uid: loki-uid
+        access: proxy
+        url: http://loki-gateway.monitoring-logs.svc.cluster.local/
+        editable: true
+
+      - name: Prometheus
+        type: prometheus
+        uid: prometheus-uid
+        access: proxy
+        url: http://mimir-nginx.monitoring-metrics.svc:80/prometheus
+        isDefault: true
+        jsonData:
+          httpMethod: POST
+          prometheusType: Prometheus
+        editable: true
+
+      - name: Tempo
+        type: tempo
+        uid: tempo-uid
+        access: proxy
+        url: http://tempo.monitoring-traces.svc.cluster.local:3200
+        editable: true
+
+# Dashboard provisioning
+dashboardProviders:
+  dashboardproviders.yaml:
+    apiVersion: 1
+    providers:
+      - name: default
+        orgId: 1
+        folder: ''
+        type: file
+        disableDeletion: false
+        editable: true
+        options:
+          path: /var/lib/grafana/dashboards/default
+
+# Pre-installed dashboards
+dashboards:
+  default:
+    kubernetes-cluster:
+      gnetId: 7249
+      revision: 1
+      datasource: Prometheus
+    loki-dashboard:
+      gnetId: 13407
+      revision: 1
+      datasource: Loki
+    tempo-dashboard:
+      gnetId: 16054
+      revision: 1
+      datasource: Tempo
+
+# Service account
+serviceAccount:
+  create: true
+  name: grafana
+
+# Feature toggles
+env:
+  GF_EXPLORE_ENABLED: true
+  GF_ALERTING_ENABLED: true
+  GF_UNIFIED_ALERTING_ENABLED: true
+  GF_FEATURE_TOGGLES_ENABLE: "traceqlEditor"

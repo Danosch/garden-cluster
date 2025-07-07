@@ -1,0 +1,35 @@
+# namespace.yaml
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: garden-app
+  labels:
+    name: garden-app
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: monitoring
+  labels:
+    name: monitoring
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: monitoring-metrics
+  labels:
+    name: monitoring-metrics
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: monitoring-logs
+  labels:
+    name: monitoring-logs
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: monitoring-traces
+  labels:
+    name: monitoring-traces

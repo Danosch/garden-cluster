@@ -1,0 +1,80 @@
+cluster:
+  name: minikube
+
+global:
+  scrapeInterval: 30s
+  maxCacheSize: 100000
+
+destinations:
+  - name: mimir
+    type: prometheus
+    url: http://mimir-nginx.monitoring-metrics.svc:80/api/v1/push
+  - name: loki
+    type: loki
+    url: http://loki-gateway.monitoring-logs.svc.cluster.local/loki/api/v1/push
+  - name: tempo
+    type: otlp
+    protocol: grpc
+    # Korrigiert für SingleBinary Tempo
+    url: tempo.monitoring-traces.svc.cluster.local:4317
+    tls:
+      insecure_skip_verify: true
+    metrics: {enabled: false}
+    logs: {enabled: false}
+    traces: {enabled: true}
+
+serviceMonitor:
+  enabled: true
+
+clusterEvents:
+  enabled: true
+
+clusterMetrics:
+  enabled: true
+
+prometheusOperatorObjects:
+  enabled: true
+
+podLogs:
+  enabled: true
+
+alloy-metrics:
+  enabled: true
+  liveDebugging:
+    enabled: true
+
+alloy-logs:
+  enabled: true
+
+alloy-singleton:
+  enabled: true
+
+applicationObservability:
+  enabled: true
+  receivers:
+    otlp:
+      grpc:
+        enabled: true
+        port: 4317
+      http:
+        enabled: true
+        port: 4318
+
+alloy-receiver:
+  enabled: true
+  alloy:
+    extraPorts:
+      - name: otlp-grpc
+        port: 4317
+        targetPort: 4317
+        protocol: TCP
+      - name: otlp-http
+        port: 4318
+        targetPort: 4318
+        protocol: TCP
+
+autoInstrumentation:
+  enabled: true
+
+traces:
+  enabled: true

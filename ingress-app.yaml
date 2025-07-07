@@ -1,0 +1,19 @@
+# ingress-app.yaml
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: garden-app-ingress
+  namespace: garden-app
+  annotations:
+    kubernetes.io/ingress.class: "nginx"
+    nginx.ingress.kubernetes.io/enable-opentelemetry: "true"
+spec:
+  ingressClassName: nginx
+  rules:
+    - host: app.garden.test
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service: { name: garden-app, port: { number: 80 } }

@@ -1,0 +1,18 @@
+version: "3.8"
+
+services:
+  garden-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: garden-app:dev
+    container_name: garden-app
+    ports:
+      - "8080:8080"
+    environment:
+      QUARKUS_DATASOURCE_DB_KIND: h2
+      QUARKUS_DATASOURCE_JDBC_URL: jdbc:h2:mem:default;DB_CLOSE_DELAY=-1
+      QUARKUS_DATASOURCE_USERNAME: sa
+      QUARKUS_DATASOURCE_PASSWORD: ""
+      QUARKUS_HIBERNATE_ORM_DATABASE_GENERATION: update
+      QUARKUS_SMALLRYE_METRICS_ENABLED: "true"

@@ -1,0 +1,152 @@
+{
+  "uid": "garden-app-overview",
+  "title": "Garden App Overview",
+  "schemaVersion": 41,
+  "version": 1,
+  "style": "dark",
+  "tags": ["garden-app","http","business"],
+  "timezone": "browser",
+  "time": { "from": "now-1h", "to": "now" },
+  "refresh": "30s",
+  "panels": [
+    {
+      "id": 1,
+      "title": "HTTP Requests/sec by URI",
+      "type": "timeseries",
+      "datasource": { "uid": "garden-metrics", "type": "prometheus" },
+      "targets": [
+        {
+          "expr": "sum by (uri)(rate(http_server_requests_seconds_count[5m]))",
+          "legendFormat": "{{uri}}",
+          "refId": "A"
+        }
+      ],
+      "gridPos": { "x": 0, "y": 0, "w": 12, "h": 6 },
+      "fieldConfig": { "defaults": { "unit": "reqps", "min": 0 } }
+    },
+    {
+      "id": 2,
+      "title": "HTTP P95 Latency by URI",
+      "type": "timeseries",
+      "datasource": { "uid": "garden-metrics", "type": "prometheus" },
+      "targets": [
+        {
+          "expr": "histogram_quantile(0.95, sum by (le,uri)(rate(http_server_requests_seconds_bucket[5m])))",
+          "legendFormat": "{{uri}}",
+          "refId": "A"
+        }
+      ],
+      "gridPos": { "x": 12, "y": 0, "w": 12, "h": 6 },
+      "fieldConfig": { "defaults": { "unit": "s", "min": 0 } }
+    },
+    {
+      "id": 3,
+      "title": "Active HTTP Connections",
+      "type": "stat",
+      "datasource": { "uid": "garden-metrics", "type": "prometheus" },
+      "targets": [
+        { "expr": "http_server_active_connections", "refId": "A" }
+      ],
+      "gridPos": { "x": 0, "y": 6, "w": 6, "h": 4 },
+      "options": { "orientation": "auto", "colorMode": "value", "graphMode": "none" }
+    },
+    {
+      "id": 4,
+      "title": "Bytes Read/sec",
+      "type": "timeseries",
+      "datasource": { "uid": "garden-metrics", "type": "prometheus" },
+      "targets": [
+        { "expr": "rate(http_server_bytes_read_sum[5m])", "refId": "A" }
+      ],
+      "gridPos": { "x": 6, "y": 6, "w": 9, "h": 4 },
+      "fieldConfig": { "defaults": { "unit": "bytes" } }
+    },
+    {
+      "id": 5,
+      "title": "Bytes Written/sec",
+      "type": "timeseries",
+      "datasource": { "uid": "garden-metrics", "type": "prometheus" },
+      "targets": [
+        { "expr": "rate(http_server_bytes_written_sum[5m])", "refId": "A" }
+      ],
+      "gridPos": { "x": 15, "y": 6, "w": 9, "h": 4 },
+      "fieldConfig": { "defaults": { "unit": "bytes" } }
+    },
+    {
+      "id": 6,
+      "title": "createGarden() Calls/sec",
+      "type": "stat",
+      "datasource": { "uid": "garden-metrics", "type": "prometheus" },
+      "targets": [
+        { "expr": "rate(garden_create_calls_total[5m])", "refId": "A" }
+      ],
+      "gridPos": { "x": 0, "y": 10, "w": 6, "h": 4 },
+      "options": { "colorMode": "value", "graphMode": "none" }
+    },
+    {
+      "id": 7,
+      "title": "createGarden() P95 Latency",
+      "type": "stat",
+      "datasource": { "uid": "garden-metrics", "type": "prometheus" },
+      "targets": [
+        {
+          "expr": "histogram_quantile(0.95, sum(rate(createGarden_latency_seconds_bucket[5m])) by (le))",
+          "refId": "A"
+        }
+      ],
+      "gridPos": { "x": 6, "y": 10, "w": 6, "h": 4 }
+    },
+    {
+      "id": 8,
+      "title": "findGarden() Calls/sec",
+      "type": "stat",
+      "datasource": { "uid": "garden-metrics", "type": "prometheus" },
+      "targets": [
+        { "expr": "rate(garden_find_calls_total[5m])", "refId": "A" }
+      ],
+      "gridPos": { "x": 12, "y": 10, "w": 6, "h": 4 }
+    },
+    {
+      "id": 9,
+      "title": "updateGarden() Calls/sec",
+      "type": "stat",
+      "datasource": { "uid": "garden-metrics", "type": "prometheus" },
+      "targets": [
+        { "expr": "rate(garden_update_calls_total[5m])", "refId": "A" }
+      ],
+      "gridPos": { "x": 18, "y": 10, "w": 6, "h": 4 }
+    },
+    {
+      "id": 10,
+      "title": "deleteGarden() Calls/sec",
+      "type": "stat",
+      "datasource": { "uid": "garden-metrics", "type": "prometheus" },
+      "targets": [
+        { "expr": "rate(garden_delete_calls_total[5m])", "refId": "A" }
+      ],
+      "gridPos": { "x": 0, "y": 14, "w": 6, "h": 4 }
+    },
+    {
+      "id": 11,
+      "title": "createPlant() Calls/sec",
+      "type": "stat",
+      "datasource": { "uid": "garden-metrics", "type": "prometheus" },
+      "targets": [
+        { "expr": "rate(plant_create_calls_total[5m])", "refId": "A" }
+      ],
+      "gridPos": { "x": 6, "y": 14, "w": 6, "h": 4 }
+    },
+    {
+      "id": 12,
+      "title": "createTree() Calls/sec",
+      "type": "stat",
+      "datasource": { "uid": "garden-metrics", "type": "prometheus" },
+      "targets": [
+        { "expr": "rate(tree_create_calls_total[5m])", "refId": "A" }
+      ],
+      "gridPos": { "x": 12, "y": 14, "w": 6, "h": 4 }
+    }
+  ],
+  "templating": { "list": [] },
+  "annotations": { "list": [] }
+}
