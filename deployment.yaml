@@ -48,3 +48,14 @@ spec:
               value: "/q/metrics"
             - name: QUARKUS_OTP_METRICS_ENABLED
               value: "true"
+            - name: QUARKUS_LOG_CONSOLE_ENABLE
+              value: "true"
+            - name: QUARKUS_LOG_CONSOLE_FORMAT
+              value: "%d{HH:mm:ss} %-5p [%c] (%t) %s%e%n"
+             # Quarkus HTTP access-log to console
+            - name: QUARKUS_HTTP_ACCESS_LOG_ENABLED
+              value: "true"
+            - name: QUARKUS_HTTP_ACCESS_LOG_CONSOLE_ENABLED
+              value: "true"
+            - name: QUARKUS_HTTP_ACCESS_LOG_PATTERN
+              value: "%h %l %u %t \"%r\" %s %b %D ms"
